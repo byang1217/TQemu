@@ -3,8 +3,9 @@ AM_CFLAGS = -g -Werror -DNEED_CPU_H \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/src/tcg \
-	-I$(top_srcdir)/src/tcg/tci
+	-I$(top_srcdir)/src/tcg/tci \
 	-I$(top_srcdir) \
+	-I$(top_srcdir)/qemu/ \
 	-I$(top_srcdir)/qemu/include \
 	-I$(top_srcdir)/qemu/tcg \
 	-I$(top_srcdir)/qemu/tcg/tci
@@ -15,7 +16,13 @@ tqemu_LDADD = -lm
 tqemu_SOURCES = \
 		src/tqemu.c \
 		src/dummy.c \
-		src/osdep.c
+		src/dummy_func.c \
+		src/osdep.c \
+		src/qemu-timer.c \
+		src/cpus.c \
+		src/exec.c \
+		src/cpu-exec.c \
+		src/util/qemu-error.c
 
 tqemu_SOURCES += \
 		 glib/gmsg.c \
@@ -39,19 +46,15 @@ tqemu_SOURCES += \
 		 qemu/qobject/qobject.c \
 		 qemu/qobject/qstring.c \
 		 qemu/cputlb.c \
-		 qemu/exec.c \
 		 qemu/memory.c \
 		 qemu/translate-all.c \
 		 qemu/ioport.c \
 		 qemu/translate-common.c \
 		 qemu/cpu-exec-common.c \
-		 qemu/cpus.c \
 		 qemu/memory_mapping.c \
-		 qemu/cpu-exec.c \
 		 qemu/accel.c \
 		 qemu/fpu/softfloat.c \
 		 qemu/crypto/aes.c \
-		 qemu/qemu-timer.c \
 		 qemu/tci.c \
 		 qemu/tcg/tcg-common.c \
 		 qemu/tcg/tcg-op.c \
@@ -63,7 +66,6 @@ tqemu_SOURCES += \
 		 qemu/util/bitops.c \
 		 qemu/util/qemu-option.c \
 		 qemu/util/qemu-config.c \
-		 qemu/util/qemu-error.c \
 		 qemu/util/cutils.c \
 		 qemu/util/bitmap.c \
 		 qemu/util/host-utils.c \
@@ -87,19 +89,21 @@ tqemu_SOURCES += \
 		 qemu/hw/core/qdev-properties-system.c \
 		 qemu/hw/core/hotplug.c \
 		 qemu/hw/core/fw-path-provider.c \
-		 qemu/./hw/core/machine.c
+		 qemu/hw/core/machine.c
 
 if TARGET_IS_ARM
 AM_CFLAGS += -DTARGET_ARM=1 -DTARGET_NAME="arm" \
 	-I$(top_srcdir)/src/gen-arm \
-	-I$(top_srcdir)/src/target-arm
+	-I$(top_srcdir)/src/target-arm \
+	-I$(top_srcdir)/qemu/target-arm
 
 endif
 
 if TARGET_IS_I386
 AM_CFLAGS += -DTARGET_I386=1 -DTARGET_NAME="i386" \
 	-I$(top_srcdir)/src/gen-i386 \
-	-I$(top_srcdir)/src/target-i386
+	-I$(top_srcdir)/src/target-i386 \
+	-I$(top_srcdir)/qemu/target-i386
 
 tqemu_SOURCES += \
 		 qemu/target-i386/cpu.c \
@@ -117,6 +121,7 @@ tqemu_SOURCES += \
 		 qemu/target-i386/misc_helper.c \
 		 qemu/target-i386/int_helper.c \
 		 qemu/target-i386/arch_memory_mapping.c \
+		 qemu/target-i386/machine.c \
 		 qemu/hw/intc/apic.c \
 		 qemu/hw/intc/apic_common.c \
 		 qemu/hw/intc/ioapic.c \
@@ -125,9 +130,10 @@ tqemu_SOURCES += \
 		 qemu/hw/intc/i8259_common.c \
 		 qemu/hw/isa/isa-bus.c \
 		 qemu/hw/i386/kvmvapic.c \
-		 qemu/hw/i386/pc.c \
-		 qemu/gen-i386/qapi-types.c \
-		 qemu/gen-i386/qapi-visit.c
+		 \
+		 src/hw/i386/pc.c \
+		 src/gen-i386/qapi-types.c \
+		 src/gen-i386/qapi-visit.c
 endif
 
 if HOST_IS_JS

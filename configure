@@ -585,7 +585,7 @@ PACKAGE_STRING='TQemu 1.0'
 PACKAGE_BUGREPORT='byang1217@gmail.com'
 PACKAGE_URL=''
 
-ac_unique_file="tqemu.c"
+ac_unique_file="src/tqemu.c"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>

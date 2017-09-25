@@ -31,9 +31,12 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <sys/uio.h>
 
+#undef __linux__
 #include <glib.h>
 #include "qemu/typedefs.h"
+
 
 #define QEMU_VMALLOC_ALIGN 4096
 
@@ -193,9 +196,6 @@ static inline int qemu_get_thread_id(void) {return 0x1234;}
 #define QEMU_MADV_HUGEPAGE 0
 #define QEMU_MADV_DONTFORK 0
 static inline int qemu_madvise(void *addr, size_t len, int advice) {(void)addr; (void)len; (void)advice; return 0;}
-
-///////////////////////////////////////////////////////////
-#include <sys/uio.h>
 
 //////////////////////////////////////////////////////////
 #include "qemu-common.h"

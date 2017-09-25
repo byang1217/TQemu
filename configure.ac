@@ -4,7 +4,7 @@
 AC_PREREQ([2.69])
 AC_INIT([TQemu], [1.0], [byang1217@gmail.com])
 AM_INIT_AUTOMAKE([subdir-objects foreign -Wno-portability -Wall -Werror])
-AC_CONFIG_SRCDIR([tqemu.c])
+AC_CONFIG_SRCDIR([src/tqemu.c])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.
