@@ -166,6 +166,10 @@ static void pc_machine_init(MachineState *machine)
     MemoryRegion *ram_memory;
     MemoryRegion *rom_memory;
     ram_addr_t lowmem;
+    X86CPU *cpu = NULL;
+
+    cpu = pc_new_cpu("qemu32", 0, NULL);
+    object_unref(OBJECT(cpu));
 
     gsi_state = g_malloc0(sizeof(*gsi_state));
     gsi = qemu_allocate_irqs(gsi_handler, gsi_state, GSI_NUM_PINS);
@@ -192,6 +196,11 @@ static void pc_machine_init(MachineState *machine)
 #endif
 
 // rom & mem
+    if (rom_mem == NULL || rom_len < 4) {
+	    error_printf("cannot get rom ...\n");
+	    abort();
+    }
+
     MemoryRegion *rom;
     rom = g_malloc(sizeof(*rom));
     memory_region_init_ram_ptr(rom, NULL, "rom", rom_len, rom_mem);
@@ -229,12 +238,3 @@ static void pc_machine_type_init(void)
 }
 
 type_init(pc_machine_type_init)
-
-void hw_init(void)
-{
-	X86CPU *cpu = NULL;
-
-	cpu = pc_new_cpu("qemu32", 0, NULL);
-	object_unref(OBJECT(cpu));
-}
-

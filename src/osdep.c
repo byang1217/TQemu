@@ -210,4 +210,3 @@ static void term_init(void)
 
     atexit(term_exit);
 }
-

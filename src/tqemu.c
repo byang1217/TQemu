@@ -3,8 +3,6 @@
 #include "hw/boards.h"
 #include "sysemu/accel.h"
 #include "hw/char/serial.h"
-#include "hw/i386/apic.h"
-#include "hw/i386/topology.h"
 #include "sysemu/cpus.h"
 #include "exec/memory.h"
 #include "exec/address-spaces.h"
@@ -22,6 +20,7 @@ void *rom_mem;
 unsigned long rom_len;
 void *ram_mem;
 unsigned long ram_len = RAM_SIZE;
+const char *mem_path = NULL;
 
 int use_rt_clock;
 bool xen_allowed;
@@ -35,9 +34,6 @@ QEMUOptionRom option_rom[MAX_OPTION_ROMS];
 int nb_option_roms;
 static RunState current_run_state = RUN_STATE_PRELAUNCH;
 int vga_interface_type = VGA_NONE;
-
-#define MAX_SERIAL_PORTS 4
-CharDriverState *serial_hds[MAX_SERIAL_PORTS];
 
 static int debug_requested;
 void qemu_system_debug_request(void)
@@ -347,16 +343,21 @@ int main(int argc, char **argv)
 
 	qemu_run_machine_init_done_notifiers();
 
-	hw_init();
-
 	qemu_devices_reset();
 	vm_start();
 
 	extern void tcg_exec_once(void);
-	while(1)
+	int qemu_bh_poll(void);
+	while(1) {
 		tcg_exec_once();
+		qemu_bh_poll();
+	}
 }
 
+void *rom_ptr(hwaddr addr)
+{
+	return NULL;
+}
 
 static void __attribute__((constructor)) rom_ram_init(void)
 {
@@ -366,7 +367,6 @@ static void __attribute__((constructor)) rom_ram_init(void)
 	fd = open("rom.bin", O_RDONLY);
 	if (fd < 0) {
 		printf("cannot find rom.bin\n");
-		exit(1);
 	} else {
 		fstat(fd, &sb);
 		rom_len = sb.st_size;
@@ -379,6 +379,7 @@ static void __attribute__((constructor)) rom_ram_init(void)
 	}
 	printf("rom_mem: %lx, rom_len: %d\n", (long)rom_mem, (int)rom_len);
 
+	ram_size = ram_len;
 	ram_mem = malloc(ram_len);
 	memset(ram_mem, 0, ram_len);
 	fd = open("ram.bin", O_RDONLY);

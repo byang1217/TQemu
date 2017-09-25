@@ -29,6 +29,7 @@ ReplayMode replay_mode = REPLAY_MODE_NONE;
 int icount_align_option;
 bool msi_nonbroken;
 CharDriverState *parallel_hds[MAX_PARALLEL_PORTS];
+bool gdb_has_xml;
 
 /* Look up symbol for debugging purpose.  Returns "" if unknown. */
 const char *lookup_symbol(target_ulong orig_addr)
@@ -76,4 +77,24 @@ const VMStateInfo vmstate_info_uint16 = {
 const VMStateInfo vmstate_info_unused_buffer = {
     .name = "unused_buffer",
 };
+
+const VMStateInfo vmstate_info_bool = {
+    .name = "bool",
+};
+
+const VMStateInfo vmstate_info_timer = {
+    .name = "timer",
+};
+
+const VMStateInfo vmstate_info_int32_le = {
+    .name = "int32 le",
+};
+
+const VMStateInfo vmstate_info_float64 = {
+    .name = "float64",
+};
+
+
+
+
 

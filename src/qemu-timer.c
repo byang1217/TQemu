@@ -591,6 +591,8 @@ int64_t timerlistgroup_deadline_ns(QEMUTimerListGroup *tlg)
 
 int64_t qemu_clock_get_ns(QEMUClockType type)
 {
+	return get_clock();
+#if 0
     int64_t now, last;
     QEMUClock *clock = qemu_clock_ptr(type);
 
@@ -615,6 +617,7 @@ int64_t qemu_clock_get_ns(QEMUClockType type)
     case QEMU_CLOCK_VIRTUAL_RT:
         return REPLAY_CLOCK(REPLAY_CLOCK_VIRTUAL_RT, cpu_get_clock());
     }
+#endif
 }
 
 void qemu_clock_register_reset_notifier(QEMUClockType type,
@@ -658,3 +661,34 @@ bool qemu_clock_run_all_timers(void)
 
     return progress;
 }
+
+/////////// RTC //////////////
+static int rtc_utc = 1;
+static int rtc_date_offset = -1; /* -1 means no change */
+QEMUClockType rtc_clock = QEMU_CLOCK_HOST;
+
+static time_t qemu_time(void)
+{
+    return qemu_clock_get_ms(QEMU_CLOCK_HOST) / 1000;
+}
+
+/***********************************************************/
+/* host time/date access */
+void qemu_get_timedate(struct tm *tm, int offset)
+{
+    time_t ti = qemu_time();
+
+    ti += offset;
+    if (rtc_date_offset == -1) {
+        if (rtc_utc)
+            gmtime_r(&ti, tm);
+        else
+            localtime_r(&ti, tm);
+    } else {
+        ti -= rtc_date_offset;
+        gmtime_r(&ti, tm);
+    }
+}
+
+
+
