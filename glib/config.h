@@ -7,10 +7,13 @@
 #undef PACKAGE_NAME
 #undef PACKAGE_STRING
 
-#if (SIZEOF_LONG == 8)
+#include <stdint.h>
+#if UINTPTR_MAX == UINT32_MAX
+#include "config_32.h"
+#elif UINTPTR_MAX == UINT64_MAX
 #include "config_64.h"
 #else
-#include "config_32.h"
+# error Unknown pointer size
 #endif
 
 // no thread and os

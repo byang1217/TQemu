@@ -10,9 +10,6 @@ AM_CFLAGS = -g -Werror -DNEED_CPU_H \
 	-I$(top_srcdir)/qemu/tcg \
 	-I$(top_srcdir)/qemu/tcg/tci
 
-bin_PROGRAMS = tqemu
-tqemu_LDADD = -lm
-
 tqemu_SOURCES = \
 		src/tqemu.c \
 		src/dummy.c \
@@ -141,6 +138,18 @@ if HOST_IS_JS
 AM_CFLAGS += -m32 \
 	-Wno-incompatible-pointer-types-discards-qualifiers \
 	-Wno-constant-conversion
+
+bin_PROGRAMS = tqemu.bc tqemu.html
+tqemu_bc_LDADD = -lm
+tqemu_bc_SOURCES = $(tqemu_SOURCES)
+
+tqemu.html: tqemu.bc
+	echo "gen html & js ..."
+	emcc -s TOTAL_MEMORY=0x8000000 $^ -o $@ --preload-file rom.bin
+
+else
+bin_PROGRAMS = tqemu
+tqemu_LDADD = -lm
 endif
 
 AM_CPPFLAGS = $(AM_CFLAGS)
