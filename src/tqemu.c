@@ -339,12 +339,20 @@ int main(int argc, char **argv)
 
 	configure_accelerator(current_machine);
 
+	init_clocks();
+
 	machine_class->init(current_machine);
 
 	qemu_run_machine_init_done_notifiers();
 
 	qemu_devices_reset();
+
 	vm_start();
+
+#if 0
+	CPUState *cs = first_cpu;
+	cs->singlestep_enabled = 1;
+#endif
 
 	extern void tcg_exec_once(void);
 	int qemu_bh_poll(void);

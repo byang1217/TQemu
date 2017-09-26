@@ -272,7 +272,6 @@ void timerlist_notify(QEMUTimerList *timer_list)
     if (timer_list->notify_cb) {
         timer_list->notify_cb(timer_list->notify_opaque);
     } else {
-	assert(0);
 //        qemu_notify_event();
     }
 }

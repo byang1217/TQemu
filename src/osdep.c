@@ -85,6 +85,7 @@ void qemu_log(const char *fmt, ...)
     va_list ap;
     va_start(ap, fmt);
     vfprintf(qemu_logfile, fmt, ap);
+    fflush(qemu_logfile);
     va_end(ap);
 }
 

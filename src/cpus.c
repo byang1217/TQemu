@@ -560,9 +560,11 @@ static bool cpu_can_run(CPUState *cpu)
 
 static void cpu_handle_guest_debug(CPUState *cpu)
 {
+#if 0
     gdb_set_stop_cpu(cpu);
     qemu_system_debug_request();
     cpu->stopped = true;
+#endif
 }
 
 static QemuMutex qemu_global_mutex;

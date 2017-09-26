@@ -46,7 +46,8 @@ const char *lookup_symbol(target_ulong orig_addr)
         ptr = qemu_get_ram_ptr(mr->ram_block,
                         memory_region_get_ram_addr(mr) + addr);
 	rcu_read_unlock();
-	snprintf(sym, sizeof(sym), "[%lx]:"TARGET_FMT_lx, (long)ptr, *ptr);
+	//snprintf(sym, sizeof(sym), "[%lx]:"TARGET_FMT_lx, (long)ptr, *ptr);
+	snprintf(sym, sizeof(sym), "ins:"TARGET_FMT_lx, *ptr);
 	return sym;
 }
 
