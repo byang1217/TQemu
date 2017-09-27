@@ -14,7 +14,6 @@ AM_CFLAGS = -g -Werror -DNEED_CPU_H \
 tqemu_SOURCES = \
 		src/tqemu.c \
 		src/dummy.c \
-		src/dummy_func.c \
 		src/osdep.c \
 		src/qemu-timer.c \
 		src/qemu-char.c \
@@ -177,7 +176,7 @@ tqemu_bc_SOURCES = $(tqemu_SOURCES)
 
 tqemu.html: tqemu.bc
 	echo "gen html & js ..."
-	emcc -s TOTAL_MEMORY=0x8000000 $^ -o $@ --preload-file rom.bin
+	emcc -s TOTAL_MEMORY=0x8000000 -s ASSERTIONS=2 $^ -o $@ --preload-file ram.bin
 
 else
 bin_PROGRAMS = tqemu

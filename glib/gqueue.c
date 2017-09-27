@@ -313,6 +313,7 @@ g_queue_find_custom (GQueue        *queue,
  * 
  * Since: 2.4
  */
+#if 0
 void
 g_queue_sort (GQueue           *queue,
               GCompareDataFunc  compare_func,
@@ -324,6 +325,7 @@ g_queue_sort (GQueue           *queue,
   queue->head = g_list_sort_with_data (queue->head, compare_func, user_data);
   queue->tail = g_list_last (queue->head);
 }
+#endif
 
 /**
  * g_queue_push_head:

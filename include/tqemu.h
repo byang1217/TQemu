@@ -102,6 +102,9 @@ void qemu_anon_ram_free(void *ptr, size_t size);
 #define CONFIG_SOFTMMU 1
 #define CONFIG_TCG_INTERPRETER 1
 
+//////////////////////////////////////////////////
+unsigned long crc32(unsigned long crc, const unsigned char *buf, unsigned int len);
+
 ////////////////////////////////////////////////
 struct rcu_head {
 	int nouse;

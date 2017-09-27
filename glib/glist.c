@@ -1026,13 +1026,13 @@ g_list_insert_sorted_real (GList    *list,
       return new_list;
     }
   
-  cmp = ((GCompareDataFunc) func) (data, tmp_list->data, user_data);
+  cmp = ((GCompareFunc) func) (data, tmp_list->data);
 
   while ((tmp_list->next) && (cmp > 0))
     {
       tmp_list = tmp_list->next;
 
-      cmp = ((GCompareDataFunc) func) (data, tmp_list->data, user_data);
+      cmp = ((GCompareFunc) func) (data, tmp_list->data);
     }
 
   new_list = _g_list_alloc0 ();
@@ -1108,6 +1108,7 @@ g_list_insert_sorted (GList        *list,
  *
  * Since: 2.10
  */
+#if 0
 GList *
 g_list_insert_sorted_with_data (GList            *list,
                                 gpointer          data,
@@ -1116,7 +1117,9 @@ g_list_insert_sorted_with_data (GList            *list,
 {
   return g_list_insert_sorted_real (list, data, (GFunc) func, user_data);
 }
+#endif
 
+#include "stdio.h"
 static GList *
 g_list_sort_merge (GList     *l1, 
                    GList     *l2,
@@ -1131,7 +1134,7 @@ g_list_sort_merge (GList     *l1,
 
   while (l1 && l2)
     {
-      cmp = ((GCompareDataFunc) compare_func) (l1->data, l2->data, user_data);
+      cmp = ((GCompareFunc) compare_func) (l1->data, l2->data);
 
       if (cmp <= 0)
         {
@@ -1242,6 +1245,7 @@ g_list_sort (GList        *list,
  * Returns: negative value if @a < @b; zero if @a = @b; positive
  *          value if @a > @b
  */
+#if 0
 GList *
 g_list_sort_with_data (GList            *list,
                        GCompareDataFunc  compare_func,
@@ -1249,3 +1253,4 @@ g_list_sort_with_data (GList            *list,
 {
   return g_list_sort_real (list, (GFunc) compare_func, user_data);
 }
+#endif
