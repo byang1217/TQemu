@@ -41,6 +41,10 @@
 #include <glib.h>
 #include "qemu/typedefs.h"
 
+typedef int32_t __attribute__((aligned(1))) int32_t_align1;
+typedef uint32_t __attribute__((aligned(1))) uint32_t_align1;
+typedef int64_t __attribute__((aligned(1))) int64_t_align1;
+typedef uint64_t __attribute__((aligned(1))) uint64_t_align1;
 
 #define QEMU_VMALLOC_ALIGN 4096
 

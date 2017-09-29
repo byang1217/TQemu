@@ -21,6 +21,13 @@ tqemu_SOURCES = \
 		src/exec.c \
 		src/cpu-exec.c \
 		src/async.c \
+		src/cpu-exec-common.c \
+		src/op_helper.c \
+		src/tci.c \
+		src/tcg/tcg.c \
+		src/tcg/tcg-common.c \
+		src/tcg/tcg-op.c \
+		src/tcg/optimize.c \
 		src/util/crc32.c \
 		src/util/qemu-error.c \
 		src/gen/qapi-types.c \
@@ -52,17 +59,11 @@ tqemu_SOURCES += \
 		 qemu/translate-all.c \
 		 qemu/ioport.c \
 		 qemu/translate-common.c \
-		 qemu/cpu-exec-common.c \
 		 qemu/memory_mapping.c \
 		 qemu/accel.c \
 		 qemu/fpu/softfloat.c \
 		 qemu/crypto/aes.c \
-		 qemu/tci.c \
-		 qemu/tcg/tcg-common.c \
-		 qemu/tcg/tcg-op.c \
-		 qemu/tcg/tcg.c \
 		 qemu/tcg-runtime.c \
-		 qemu/tcg/optimize.c \
 		 qemu/util/module.c \
 		 qemu/util/error.c \
 		 qemu/util/bitops.c \
@@ -120,9 +121,10 @@ tqemu_SOURCES += \
 		 qemu/hw/core/ptimer.c \
 		 qemu/hw/timer/arm_timer.c \
 		 qemu/hw/intc/pl190.c \
-		 qemu/hw/char/pl011.c \
 		 qemu/hw/timer/pl031.c \
-		 qemu/hw/misc/arm_sysctl.c
+		 qemu/hw/misc/arm_sysctl.c \
+		 \
+		 src/hw/char/pl011.c
 
 tqemu_SOURCES += \
 		 src/hw/arm/versatilepb.c
@@ -167,8 +169,8 @@ endif
 if HOST_IS_JS
 #workaround for emcc
 AM_CFLAGS += -m32 \
-	-Wno-incompatible-pointer-types-discards-qualifiers \
-	-Wno-constant-conversion
+	     -Wno-incompatible-pointer-types-discards-qualifiers \
+	     -Wno-constant-conversion
 
 bin_PROGRAMS = tqemu.bc tqemu.html
 tqemu_bc_LDADD = -lm
@@ -176,7 +178,8 @@ tqemu_bc_SOURCES = $(tqemu_SOURCES)
 
 tqemu.html: tqemu.bc
 	echo "gen html & js ..."
-	emcc -s TOTAL_MEMORY=0x8000000 -s ASSERTIONS=2 $^ -o $@ --preload-file ram.bin
+#	emcc -s TOTAL_MEMORY=0x8000000 -s ASSERTIONS=2 -s SAFE_HEAP=1 -s ALIASING_FUNCTION_POINTERS=0 $^ -o n.js
+	emcc -s TOTAL_MEMORY=0x8000000 -s ASSERTIONS=2 -s SAFE_HEAP=1 -s ALIASING_FUNCTION_POINTERS=0 $^ -o $@
 
 else
 bin_PROGRAMS = tqemu

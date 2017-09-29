@@ -140,8 +140,10 @@ static inline tcg_target_ulong cpu_tb_exec(CPUState *cpu, TranslationBlock *itb)
     uint8_t *tb_ptr = itb->tc_ptr;
 
 #if 0
+#if 0
     cpu_dump_state(cpu, stdout, fprintf, 0);
     fflush(stderr);
+#endif
     qemu_log_mask_and_addr(CPU_LOG_EXEC, itb->pc,
                            "Trace [" TARGET_FMT_lx "] %s\n",
                            itb->pc, lookup_symbol(itb->pc));

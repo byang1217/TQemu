@@ -20,7 +20,9 @@ make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi-
 ## JS Limitation
 emcc has func pointer limitation, which needs function prototype being matched strictly. 
 	g_list cmp function needs to be reworked.
+	all op helper functions need to be fixed
 
+emcc has memory alignment limitation, which cannot access unaligned memory.
 
 ## JS debug
 It can find corresponding C functions in JS code with additional prefix "\_" 
