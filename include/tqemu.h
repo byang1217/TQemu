@@ -1,6 +1,10 @@
 #ifndef TQEMU_H
 #define TQEMU_H
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 #include "qemu/compiler.h"
 #include <stdarg.h>
 #include <stddef.h>
@@ -81,9 +85,9 @@
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 #endif
 
-extern void *rom_mem;
+extern unsigned char rom_mem[];
 extern unsigned long rom_len;
-extern void *ram_mem;
+extern unsigned char ram_mem[];
 extern unsigned long ram_len;
 
 const char *qemu_hw_version(void);

@@ -14,13 +14,7 @@
 #include "qapi-visit.h"
 #include "qom/cpu.h"
 
-#define RAM_SIZE (1024*1024*64)
-
-void *rom_mem;
-unsigned long rom_len;
-void *ram_mem;
-unsigned long ram_len = RAM_SIZE;
-const char *mem_path = NULL;
+#include "prebuild/mem.h"
 
 int use_rt_clock;
 bool xen_allowed;
@@ -365,45 +359,4 @@ int main(int argc, char **argv)
 void *rom_ptr(hwaddr addr)
 {
 	return NULL;
-}
-
-static void __attribute__((constructor)) rom_ram_init(void)
-{
-	int fd;
-	struct stat sb;
-
-	fd = open("rom.bin", O_RDONLY);
-	if (fd < 0) {
-		printf("cannot find rom.bin\n");
-	} else {
-		fstat(fd, &sb);
-		rom_len = sb.st_size;
-		rom_mem = malloc(rom_len);
-		printf("load rom.bin, len=%d ...\n", (int)rom_len);
-		if (read(fd, rom_mem, rom_len) != rom_len) {
-			printf("load rom.bin error\n");
-			exit(1);
-		}
-	}
-	printf("rom_mem: %lx, rom_len: %d\n", (long)rom_mem, (int)rom_len);
-
-	ram_size = ram_len;
-	ram_mem = malloc(ram_len);
-	memset(ram_mem, 0, ram_len);
-	fd = open("ram.bin", O_RDONLY);
-	if (fd < 0) {
-		printf("cannot find ram.bin\n");
-	} else {
-		fstat(fd, &sb);
-		if (sb.st_size > ram_len) {
-			printf("ram.bin is too big\n");
-			exit(1);
-		}
-		printf("load ram.bin, len=%d ...\n", (int)sb.st_size);
-		if (read(fd, ram_mem, sb.st_size) != sb.st_size) {
-			printf("load ram.bin error\n");
-			exit(1);
-		}
-	}
-	printf("ram_mem: %lx, ram_len: %d\n", (long)ram_mem, (int)ram_len);
 }
