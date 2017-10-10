@@ -303,12 +303,27 @@ static QemuOptsList qemu_machine_opts = {
 };
 
 void hw_init(void);
+void tcg_exec_once(void);
+int qemu_bh_poll(void);
+static void main_loop(void)
+{
+	int count_per_loop = 10000;
+
+	while(--count_per_loop > 0) {
+		tcg_exec_once();
+		qemu_clock_run_all_timers();
+		qemu_bh_poll();
+	}
+}
 int main(int argc, char **argv)
 {
 #ifdef __EMSCRIPTEN__
 	//workaround
 	dup2(1, 2);  //redirects stderr to stdout below this line.
 #endif
+	/* make stdin and stdout unbuffered */
+	setvbuf(stdin, NULL, _IONBF, 0);
+	setvbuf(stdout, NULL, _IONBF, 0);
 	qemu_logfile = stdout;
 
 	MachineClass *machine_class;
@@ -350,13 +365,12 @@ int main(int argc, char **argv)
 	cs->singlestep_enabled = 1;
 #endif
 
-	extern void tcg_exec_once(void);
-	int qemu_bh_poll(void);
-	while(1) {
-		tcg_exec_once();
-		qemu_clock_run_all_timers();
-		qemu_bh_poll();
-	}
+#ifdef __EMSCRIPTEN__
+	emscripten_set_main_loop(main_loop, 1000, 0);
+#else
+	while(1)
+		main_loop();
+#endif
 }
 
 void *rom_ptr(hwaddr addr)
