@@ -2347,11 +2347,15 @@ int tcg_gen_code(TCGContext *s, TranslationBlock *tb)
     }
 #endif
 
-#if 0
-        qemu_log("OP:\n");
-        tcg_dump_ops(s);
-        qemu_log("\n");
-#endif
+/*
+	if (0xc00090d0 == tb->pc)
+		temp_log_enable = 1;
+*/
+	if (temp_log_enable) {
+		qemu_log("OP:\n");
+		tcg_dump_ops(s);
+		qemu_log("\n");
+	}
 
 #ifdef DEBUG_DISAS
     if (unlikely(qemu_loglevel_mask(CPU_LOG_TB_OP)

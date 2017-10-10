@@ -31,8 +31,9 @@
 #include <sys/socket.h>
 #include <termios.h>
 
+int temp_log_enable;
 FILE *qemu_logfile;
-int qemu_loglevel = -1;
+int qemu_loglevel = 0;
 static const char *hw_version = "2.5+";
 
 bool id_wellformed(const char *id)

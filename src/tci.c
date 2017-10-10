@@ -470,11 +470,13 @@ static bool tci_compare64(uint64_t u0, uint64_t u1, TCGCond condition)
 /* Interpret pseudo code in tb. */
 uintptr_t tcg_qemu_tb_exec(CPUArchState *env, uint8_t *tb_ptr)
 {
+    CPUState *cpu = ENV_GET_CPU(env);
     long tcg_temps[CPU_TEMP_BUF_NLONGS];
     uintptr_t sp_value = (uintptr_t)(tcg_temps + CPU_TEMP_BUF_NLONGS);
     uintptr_t next_tb = 0;
     uint8_t *org_tb_ptr = tb_ptr;
     uint8_t *prev_tb_ptr = tb_ptr;
+    int max_exec_count = 4096;
 
     tci_reg[TCG_AREG0] = (tcg_target_ulong)env;
     tci_reg[TCG_REG_CALL_STACK] = sp_value;
@@ -505,11 +507,15 @@ uintptr_t tcg_qemu_tb_exec(CPUArchState *env, uint8_t *tb_ptr)
         tci_tb_ptr = (uintptr_t)tb_ptr;
 #endif
 
-#if 0
-	{
+	if (--max_exec_count < 0)
+		cpu_exit(cpu);
+
+#if 1
+	if (temp_log_enable){
 		const TCGOpDef *def = &tcg_op_defs[opc];
 		int prev_op_len = tb_ptr - prev_tb_ptr;
 		int i;
+
 #if 0
 		if (prev_op_len > 0) {
 			printf("\tlen=%d, ", prev_op_len);

@@ -337,6 +337,8 @@ int main(int argc, char **argv)
 
 	machine_class->init(current_machine);
 
+	qemu_register_reset(qbus_reset_all_fn, sysbus_get_default());
+
 	qemu_run_machine_init_done_notifiers();
 
 	qemu_devices_reset();
@@ -352,6 +354,7 @@ int main(int argc, char **argv)
 	int qemu_bh_poll(void);
 	while(1) {
 		tcg_exec_once();
+		qemu_clock_run_all_timers();
 		qemu_bh_poll();
 	}
 }

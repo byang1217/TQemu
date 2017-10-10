@@ -89,6 +89,8 @@ typedef uint64_t __attribute__((aligned(1))) uint64_t_align1;
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 #endif
 
+extern int temp_log_enable;
+
 extern unsigned char rom_mem[];
 extern unsigned long rom_len;
 extern unsigned char ram_mem[];

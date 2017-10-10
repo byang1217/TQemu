@@ -36,6 +36,7 @@ bool gdb_has_xml;
 /* Look up symbol for debugging purpose.  Returns "" if unknown. */
 const char *lookup_symbol(target_ulong orig_addr)
 {
+#if 0
 	static char sym[32];
         target_ulong *ptr;
         hwaddr l, addr;
@@ -51,6 +52,9 @@ const char *lookup_symbol(target_ulong orig_addr)
 	//snprintf(sym, sizeof(sym), "[%lx]:"TARGET_FMT_lx, (long)ptr, *ptr);
 	snprintf(sym, sizeof(sym), "ins:"TARGET_FMT_lx, *ptr);
 	return sym;
+#else
+	return "";
+#endif
 }
 
 const VMStateInfo vmstate_info_uint8 = {

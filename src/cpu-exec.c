@@ -139,6 +139,7 @@ static inline tcg_target_ulong cpu_tb_exec(CPUState *cpu, TranslationBlock *itb)
     uintptr_t next_tb;
     uint8_t *tb_ptr = itb->tc_ptr;
 
+	if (temp_log_enable) printf("exec pc: %x\n", itb->pc);
 #if 0
 #if 0
     cpu_dump_state(cpu, stdout, fprintf, 0);
@@ -178,10 +179,12 @@ static inline tcg_target_ulong cpu_tb_exec(CPUState *cpu, TranslationBlock *itb)
          */
         CPUClass *cc = CPU_GET_CLASS(cpu);
         TranslationBlock *tb = (TranslationBlock *)(next_tb & ~TB_EXIT_MASK);
+#if 0
         qemu_log_mask_and_addr(CPU_LOG_EXEC, itb->pc,
                                "Stopped execution of TB chain before %p ["
                                TARGET_FMT_lx "] %s\n",
                                itb->tc_ptr, itb->pc, lookup_symbol(itb->pc));
+#endif
         if (cc->synchronize_from_tb) {
             cc->synchronize_from_tb(cpu, tb);
         } else {
@@ -444,8 +447,7 @@ int cpu_exec(CPUState *cpu)
             }
 
 //            next_tb = 0; /* force lookup of first TB */
-            for(;;) {
-	    //{
+	    do {
                 interrupt_request = cpu->interrupt_request;
                 if (unlikely(interrupt_request)) {
                     if (unlikely(cpu->singlestep_enabled & SSTEP_NOIRQ)) {
@@ -585,7 +587,7 @@ int cpu_exec(CPUState *cpu)
                 align_clocks(&sc, cpu);
                 /* reset soft MMU for next block (it can currently
                    only be set by a memory fault) */
-            } /* for(;;) */
+            } while(interrupt_request); /* for(;;) */
         } else {
 	    next_tb = 0;
 #if defined(__clang__) || !QEMU_GNUC_PREREQ(4, 6)
@@ -615,13 +617,13 @@ int cpu_exec(CPUState *cpu)
     }while(0);
     cpu->jmp_valid = 0;
 
-    cc->cpu_exec_exit(cpu);
+//    cc->cpu_exec_exit(cpu);
     rcu_read_unlock();
 
     /* fail safe : never use current_cpu outside cpu_exec() */
-    current_cpu = NULL;
+//    current_cpu = NULL;
 
     /* Does not need atomic_mb_set because a spurious wakeup is okay.  */
-    atomic_set(&tcg_current_cpu, NULL);
+//    atomic_set(&tcg_current_cpu, NULL);
     return ret;
 }
