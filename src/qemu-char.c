@@ -237,7 +237,7 @@ static void stdio_chr_poll(void *opaque)
 	while (qemu_chr_be_can_write(chr) && (read(0, &c, 1) == 1)) {
 		qemu_chr_be_write(chr, &c, 1);
 	}
-	timer_mod(stdio_chr_poll_timer, qemu_clock_get_ms(QEMU_CLOCK_REALTIME) + 1000);
+	timer_mod(stdio_chr_poll_timer, qemu_clock_get_ms(QEMU_CLOCK_REALTIME) + 500);
 }
 
 static CharDriverState stdio_drv = {

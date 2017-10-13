@@ -20,6 +20,10 @@ var Module = {
 			term.write(String.fromCharCode(code));
 		}
 
+		var loadingElement = document.getElementById('loading');
+		if (loadingElement)
+			loadingElement.style.display = 'none';
+
 		term.open(document.getElementById('stdio'));
 		term.reset();
 		term.on('data', function(data) {

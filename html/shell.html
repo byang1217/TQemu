@@ -2,8 +2,31 @@
 <html lang="en-us">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>TQemu</title>
+<style>
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
+
 </head>
 <body>
 
@@ -15,7 +38,10 @@
 	<textarea class="emscripten" id="output" rows="8"></textarea>
 </div>
 
-<div>TQemu (Tiny Qemu) Yang, Bin "byang1217@gmail.com" https://github.com/byang1217/TQemu</div>
+<div style="font-weight: bold;">TQemu (Tiny Qemu)</div>
+<div>Yang, Bin "byang1217@gmail.com"</div>
+<div><a href="https://github.com/byang1217/TQemu">https://github.com/byang1217/TQemu</a></div>
+<div id="loading" class="loader"></div>
 <div id="stdio"></div>
 
 <script type='text/javascript'>

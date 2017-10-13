@@ -307,22 +307,32 @@ void tcg_exec_once(void);
 int qemu_bh_poll(void);
 static void main_loop(void)
 {
-#if 0
+#if 1
 	int count_per_loop = 10000;
 	while(--count_per_loop > 0) {
 		tcg_exec_once();
-		qemu_clock_run_all_timers();
-		qemu_bh_poll();
+		if (first_cpu->halted)
+			break;
 	}
+	qemu_clock_run_all_timers();
+	qemu_bh_poll();
 #else
-	int count_per_loop = 10000;
+	static int64_t last_timer_hit = 0;
+	int count_per_loop = 4000;
 	int64_t start_time = qemu_clock_get_ms(QEMU_CLOCK_REALTIME);
 	while (qemu_clock_get_ms(QEMU_CLOCK_REALTIME) - start_time < 500) {
 		while(--count_per_loop > 0) {
 			tcg_exec_once();
-			qemu_clock_run_all_timers();
-			qemu_bh_poll();
+			if (first_cpu->halted)
+				break;
 		}
+		if (!last_timer_hit && qemu_clock_run_all_timers())
+			last_timer_hit = qemu_clock_get_ms(QEMU_CLOCK_REALTIME);
+		if (!first_cpu->halted && (qemu_clock_get_ms(QEMU_CLOCK_REALTIME) - last_timer_hit < 100))
+			continue;
+		else
+			last_timer_hit = 0;
+		qemu_bh_poll();
 	}
 #endif
 }

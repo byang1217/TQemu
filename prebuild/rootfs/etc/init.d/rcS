@@ -4,5 +4,5 @@
 PATH=/bin:/sbin:/usr/bin:/usr/sbin
 export PATH
 
-#mount -a
+mount -a
 #mdev -s

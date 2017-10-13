@@ -178,8 +178,7 @@ tqemu_bc_SOURCES = $(tqemu_SOURCES)
 
 tqemu.html: tqemu.bc
 	echo "gen html & js ..."
-#	emcc -s TOTAL_MEMORY=0x8000000 -s ASSERTIONS=2 -s SAFE_HEAP=1 -s ALIASING_FUNCTION_POINTERS=0 $^ -o n.js
-	emcc -s TOTAL_MEMORY=0x8000000 -s ASSERTIONS=2 -s SAFE_HEAP=1 -s ALIASING_FUNCTION_POINTERS=0 \
+	emcc -O3 -s TOTAL_MEMORY=0x8000000 -s ASSERTIONS=2 -s SAFE_HEAP=1 -s ALIASING_FUNCTION_POINTERS=0 \
 			     --shell-file $(top_srcdir)/html/shell.html \
 			     --pre-js $(top_srcdir)/html/term.js --pre-js $(top_srcdir)/html/stdio.js \
 			     $^ -o $@
