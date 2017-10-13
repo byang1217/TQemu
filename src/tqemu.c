@@ -307,13 +307,24 @@ void tcg_exec_once(void);
 int qemu_bh_poll(void);
 static void main_loop(void)
 {
+#if 0
 	int count_per_loop = 10000;
-
 	while(--count_per_loop > 0) {
 		tcg_exec_once();
 		qemu_clock_run_all_timers();
 		qemu_bh_poll();
 	}
+#else
+	int count_per_loop = 10000;
+	int64_t start_time = qemu_clock_get_ms(QEMU_CLOCK_REALTIME);
+	while (qemu_clock_get_ms(QEMU_CLOCK_REALTIME) - start_time < 500) {
+		while(--count_per_loop > 0) {
+			tcg_exec_once();
+			qemu_clock_run_all_timers();
+			qemu_bh_poll();
+		}
+	}
+#endif
 }
 int main(int argc, char **argv)
 {
@@ -368,8 +379,10 @@ int main(int argc, char **argv)
 #ifdef __EMSCRIPTEN__
 	emscripten_set_main_loop(main_loop, 1000, 0);
 #else
-	while(1)
+	while(1) {
 		main_loop();
+		usleep(1000);
+	}
 #endif
 }
 

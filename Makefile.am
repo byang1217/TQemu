@@ -1,4 +1,4 @@
-AM_CFLAGS = -g -Werror -DNEED_CPU_H \
+AM_CFLAGS = -g -O3 -Werror -DNEED_CPU_H \
 	-include ${top_builddir}/config.h \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/src \
