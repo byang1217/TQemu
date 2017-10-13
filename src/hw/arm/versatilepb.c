@@ -25,8 +25,10 @@
 #include "hw/block/flash.h"
 #include "qemu/error-report.h"
 
+#define ROM_ADDRESS 0xf000000
+#define KERNEL_LOAD_ADDRESS ROM_ADDRESS
+
 #define MEM_START_ADDRESS 0
-#define KERNEL_LOAD_ADDRESS 0x10000
 #define KERNEL_ARGS_ADDR 0x100
 
 #define VERSATILE_FLASH_ADDR 0x34000000
@@ -220,7 +222,12 @@ static void do_cpu_reset(void *opaque)
 	    /* Set to non-secure if not a secure boot */
 	    env->cp15.scr_el3 |= SCR_NS;
     }
-    cpu_set_pc(cs, 0);
+//    cpu_set_pc(cs, KERNEL_LOAD_ADDRESS);
+    cpu->env.regs[0] = 0;
+    cpu->env.regs[1] = 0x183; //versatile_pb board id
+    cpu->env.regs[2] = KERNEL_ARGS_ADDR; //kernel arg address
+    cpu->env.regs[15] = KERNEL_LOAD_ADDRESS;
+    
 
     /* ATAG_CORE */
     WRITE_WORD(p, 5);
@@ -252,6 +259,7 @@ static void versatile_init(MachineState *machine, int board_id)
     Object *cpuobj;
     ARMCPU *cpu;
     MemoryRegion *sysmem = get_system_memory();
+    MemoryRegion *rom0 = g_new(MemoryRegion, 1);
     MemoryRegion *ram0 = g_new(MemoryRegion, 1);
     MemoryRegion *ram1 = g_new(MemoryRegion, 1);
     qemu_irq pic[32];
@@ -303,12 +311,14 @@ static void versatile_init(MachineState *machine, int board_id)
                                        do_arm_linux_init, NULL);
 
 }
-#if 0
-    memory_region_allocate_system_memory(ram, NULL, "versatile.ram",
-                                         machine->ram_size);
-    /* ??? RAM should repeat to fill physical memory space.  */
-    /* SDRAM at address zero.  */
-    memory_region_add_subregion(sysmem, 0, ram);
+#if 1
+    memory_region_init_ram_ptr(rom0, NULL, "rom0", rom_len, rom_mem);
+    memory_region_add_subregion(sysmem, ROM_ADDRESS, rom0);
+
+    memory_region_init_ram_ptr(ram1, NULL, "ram1", ram_len, ram_mem);
+    memory_region_add_subregion(sysmem, MEM_START_ADDRESS, ram1);
+
+    ram_size = machine->ram_size = ram_len;
 #else
     static uint32_t ram0_memory[KERNEL_LOAD_ADDRESS/sizeof(uint32_t)] = {
 	    0xe3a00000, //mov     r0, #0

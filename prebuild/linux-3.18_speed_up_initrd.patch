@@ -1,0 +1,12 @@
+diff --git a/scripts/gen_initramfs_list.sh b/scripts/gen_initramfs_list.sh
+index 17fa901..d3e11f0 100755
+--- a/scripts/gen_initramfs_list.sh
++++ b/scripts/gen_initramfs_list.sh
+@@ -262,6 +262,7 @@ case "$arg" in
+ 		shift
+ 		;;
+ esac
++compr="cat"
+ while [ $# -gt 0 ]; do
+ 	arg="$1"
+ 	shift

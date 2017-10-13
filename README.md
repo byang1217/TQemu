@@ -20,6 +20,10 @@ make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi-
 ## TCG dead lock
 when exec loop which depends on HW interrupt, single thread will cause dead lock. Add max exec ins count to exit dead loop.
 
+## Linux XIP Translate Table issue debug
+Get base from head.S code (r4) : mcr     p15, 0, r4, c2, c0, 0           @ load page table pointer
+
+
 ## JS Limitation
 emcc has func pointer limitation, which needs function prototype being matched strictly. 
 	g_list cmp function needs to be reworked.
