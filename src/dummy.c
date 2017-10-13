@@ -142,11 +142,6 @@ CharDriverState *qemu_chr_find(const char *name) {abort();}
 int net_hub_id_for_client(NetClientState *nc, int *id) {abort();}
 NetClientState *net_hub_port_find(int hub_id) {abort();}
 int event_notifier_set(EventNotifier *e) {abort();}
-void qemu_chr_add_handlers(CharDriverState *s,
-                           IOCanReadHandler *fd_can_read,
-                           IOReadHandler *fd_read,
-                           IOEventHandler *fd_event,
-                           void *opaque) {abort();}
 int qemu_find_net_clients_except(const char *id, NetClientState **ncs,
                                  NetClientOptionsKind type, int max) {abort();}
 target_ulong do_arm_semihosting(CPUARMState *env) {abort();}

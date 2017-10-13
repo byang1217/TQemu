@@ -123,7 +123,7 @@ int qemu_chr_fe_write_all(CharDriverState *s, const uint8_t *buf, int len)
 
 int qemu_chr_fe_read_all(CharDriverState *s, uint8_t *buf, int len)
 {
-	return s->chr_sync_read(s, buf, len);
+	abort();
 }
 
 int qemu_chr_fe_ioctl(CharDriverState *s, int cmd, void *arg)
@@ -208,3 +208,73 @@ static CharDriverState *qemu_chr_open_null(const char *id,
     return chr;
 }
 
+void qemu_chr_add_handlers(CharDriverState *s,
+                           IOCanReadHandler *fd_can_read,
+                           IOReadHandler *fd_read,
+                           IOEventHandler *fd_event,
+                           void *opaque)
+{
+    s->chr_can_read = fd_can_read;
+    s->chr_read = fd_read;
+    s->chr_event = fd_event;
+    s->handler_opaque = opaque;
+
+    qemu_chr_be_generic_open(s);
+}
+
+///////////////stdio
+static QEMUTimer *stdio_chr_poll_timer;
+static int stdio_chr_write(CharDriverState *chr, const uint8_t *buf, int len)
+{
+	return write(1, buf, len);
+}
+
+static void stdio_chr_poll(void *opaque)
+{
+	CharDriverState *chr = opaque;
+        unsigned char c = 0;
+
+	while (qemu_chr_be_can_write(chr) && (read(0, &c, 1) == 1)) {
+		qemu_chr_be_write(chr, &c, 1);
+	}
+	timer_mod(stdio_chr_poll_timer, qemu_clock_get_ms(QEMU_CLOCK_REALTIME) + 1000);
+}
+
+static CharDriverState stdio_drv = {
+	.chr_write = stdio_chr_write,
+	.avail_connections = 1,
+};
+
+static void stdio_chr_realize(Notifier *notifier, void *unused)
+{
+	CharDriverState *chr = &stdio_drv;
+	struct termios tty;
+
+	memset(&tty, 0, sizeof(tty));
+	tty.c_iflag &= ~(IGNBRK|BRKINT|PARMRK|ISTRIP
+			|INLCR|IGNCR|ICRNL|IXON);
+	tty.c_oflag |= OPOST;
+	tty.c_lflag &= ~(ECHO|ECHONL|ICANON|IEXTEN);
+	tty.c_cflag &= ~(CSIZE|PARENB);
+	tty.c_cflag |= CS8;
+	tty.c_cc[VMIN] = 1;
+	tty.c_cc[VTIME] = 0;
+	//tty.c_lflag &= ~ISIG;
+
+	tcsetattr (0, TCSANOW, &tty);
+	fcntl(0, F_SETFL, fcntl(0, F_GETFL) | O_NONBLOCK);
+
+	stdio_chr_poll_timer = timer_new_ms(QEMU_CLOCK_REALTIME, stdio_chr_poll, chr);
+	timer_mod(stdio_chr_poll_timer, qemu_clock_get_ms(QEMU_CLOCK_REALTIME) + 500);
+}
+
+static void qemu_chr_init(void)
+{
+	static Notifier stdio_chr_realize_notify = {
+		.notify = stdio_chr_realize,
+	};
+	serial_hds[0] = &stdio_drv;
+	qemu_add_machine_init_done_notifier(&stdio_chr_realize_notify);
+
+}
+type_init(qemu_chr_init);

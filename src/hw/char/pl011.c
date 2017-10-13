@@ -144,8 +144,8 @@ static void pl011_write(void *opaque, hwaddr offset,
     case 0: /* UARTDR */
         /* ??? Check if transmitter is enabled.  */
         ch = value;
-fprintf(stdout, "%c", ch);
-fflush(stdout);
+//fprintf(stdout, "%c", ch);
+//fflush(stdout);
         if (s->chr)
             qemu_chr_fe_write(s->chr, &ch, 1);
         s->int_level |= PL011_INT_TX;
