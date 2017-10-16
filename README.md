@@ -5,6 +5,8 @@ To support any host, it cannot use any OS specific API. Libc and Libm might be t
 # Demo
 https://byang1217.github.io/tqemu.html
 
+mirror in China: http://byang1217.coding.me/tqemu.html
+
 # How to build Native version
 mkdir out; cd out;
 ../TQemu/configure
